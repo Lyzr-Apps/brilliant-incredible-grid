@@ -260,7 +260,7 @@ function LeaveTableComponent({
                 <td className="px-4 py-3 text-gray-900">{record.employeeName}</td>
                 <td className="px-4 py-3 text-gray-700">{record.leaveType}</td>
                 <td className="px-4 py-3 text-gray-700">
-                  {new Date(record.startDate).toLocaleDateString()} - {new Date(record.endDate).toLocaleDateString()}
+                  {record.startDate} - {record.endDate}
                 </td>
                 <td className="px-4 py-3 text-gray-700">{record.days}</td>
                 <td className="px-4 py-3">
@@ -779,7 +779,7 @@ export default function HomePage() {
                         <p className="font-medium text-gray-900">{leave.employeeName}</p>
                         <p className="mt-1 text-gray-600">{leave.leaveType}</p>
                         <p className="mt-1 text-gray-500">
-                          {new Date(leave.startDate).toLocaleDateString()}
+                          {leave.startDate}
                         </p>
                       </div>
                     ))}
@@ -813,8 +813,7 @@ export default function HomePage() {
               <div className="mb-2">
                 <span className="text-gray-600">Dates: </span>
                 <span className="font-medium text-gray-900">
-                  {new Date(confirmDialog.leaveDetails.startDate).toLocaleDateString()} -{' '}
-                  {new Date(confirmDialog.leaveDetails.endDate).toLocaleDateString()}
+                  {confirmDialog.leaveDetails.startDate} - {confirmDialog.leaveDetails.endDate}
                 </span>
               </div>
               <div>
