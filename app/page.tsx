@@ -499,7 +499,7 @@ export default function HomePage() {
   const getFilteredLeaves = () => {
     let filtered = leaveRecords
 
-    if (selectedDepartment) {
+    if (selectedDepartment && selectedDepartment !== 'all') {
       const deptEmployees = SAMPLE_EMPLOYEES.filter(
         (e) => e.department.toLowerCase() === selectedDepartment.toLowerCase()
       ).map((e) => e.name)
@@ -718,7 +718,7 @@ export default function HomePage() {
                     <SelectValue placeholder="All Departments" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Departments</SelectItem>
+                    <SelectItem value="all">All Departments</SelectItem>
                     <SelectItem value="Human Resources">Human Resources</SelectItem>
                     <SelectItem value="Engineering">Engineering</SelectItem>
                     <SelectItem value="Product">Product</SelectItem>
