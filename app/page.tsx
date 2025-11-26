@@ -9,7 +9,7 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@
 import { Checkbox } from '@/components/ui/checkbox'
 import { Badge } from '@/components/ui/badge'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { Send, Menu, Bell, User, ChevronDown, Calendar, Filter, Download, CheckCircle, XCircle, Clock, User2, Building2, Mail, Phone } from 'lucide-react'
+import { Send, Menu, Bell, User, Filter, Download, CheckCircle, XCircle, Clock, User2, Building2, Mail, Phone, Briefcase, Target } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 // Types
@@ -21,175 +21,240 @@ interface Message {
   parsedData?: any
 }
 
-interface EmployeeCard {
+interface Candidate {
   id: string
   name: string
-  designation: string
+  position: string
   department: string
   email: string
   phone: string
-  leaveBalance?: number
+  appliedDate: string
+  status: 'applied' | 'shortlisted' | 'interviewed' | 'offered' | 'rejected'
+  experience: number
+  skills: string[]
 }
 
-interface LeaveRecord {
+interface JobOpening {
   id: string
-  employeeName: string
-  leaveType: string
-  startDate: string
-  endDate: string
-  status: 'pending' | 'approved' | 'rejected'
-  days: number
+  title: string
+  department: string
+  postedDate: string
+  applicants: number
+  status: 'open' | 'closed'
+  location: string
+  experience: string
 }
 
-interface AttendanceDay {
-  date: string
-  status: 'present' | 'absent' | 'half-day'
+interface InterviewRecord {
+  id: string
+  candidateName: string
+  position: string
+  interviewDate: string
+  interviewer: string
+  status: 'scheduled' | 'completed' | 'pending'
+  feedback?: string
 }
 
-// Dummy Data
-const SAMPLE_EMPLOYEES: EmployeeCard[] = [
+// Sample Data
+const SAMPLE_CANDIDATES: Candidate[] = [
   {
-    id: 'EMP001',
+    id: 'CND001',
     name: 'Emma Watson',
-    designation: 'HR Manager',
-    department: 'Human Resources',
-    email: 'emma.watson@company.com',
+    position: 'Senior Engineer',
+    department: 'Engineering',
+    email: 'emma.watson@email.com',
     phone: '+1-234-567-8901',
-    leaveBalance: 12,
+    appliedDate: '2024-01-10',
+    status: 'interviewed',
+    experience: 5,
+    skills: ['React', 'Node.js', 'Python'],
   },
   {
-    id: 'EMP002',
+    id: 'CND002',
     name: 'John Smith',
-    designation: 'Software Engineer',
-    department: 'Engineering',
-    email: 'john.smith@company.com',
-    phone: '+1-234-567-8902',
-    leaveBalance: 15,
-  },
-  {
-    id: 'EMP003',
-    name: 'Sarah Johnson',
-    designation: 'Product Manager',
+    position: 'Product Manager',
     department: 'Product',
-    email: 'sarah.johnson@company.com',
-    phone: '+1-234-567-8903',
-    leaveBalance: 10,
+    email: 'john.smith@email.com',
+    phone: '+1-234-567-8902',
+    appliedDate: '2024-01-12',
+    status: 'shortlisted',
+    experience: 7,
+    skills: ['Product Strategy', 'Analytics', 'Leadership'],
   },
   {
-    id: 'EMP004',
-    name: 'Michael Chen',
-    designation: 'Data Analyst',
-    department: 'Analytics',
-    email: 'michael.chen@company.com',
-    phone: '+1-234-567-8904',
-    leaveBalance: 14,
-  },
-  {
-    id: 'EMP005',
-    name: 'Lisa Rodriguez',
-    designation: 'Designer',
+    id: 'CND003',
+    name: 'Sarah Johnson',
+    position: 'UX Designer',
     department: 'Design',
-    email: 'lisa.rodriguez@company.com',
-    phone: '+1-234-567-8905',
-    leaveBalance: 13,
+    email: 'sarah.johnson@email.com',
+    phone: '+1-234-567-8903',
+    appliedDate: '2024-01-08',
+    status: 'interviewed',
+    experience: 4,
+    skills: ['Figma', 'User Research', 'Prototyping'],
   },
   {
-    id: 'EMP006',
-    name: 'David Kim',
-    designation: 'QA Engineer',
+    id: 'CND004',
+    name: 'Michael Chen',
+    position: 'Data Engineer',
     department: 'Engineering',
-    email: 'david.kim@company.com',
-    phone: '+1-234-567-8906',
-    leaveBalance: 11,
+    email: 'michael.chen@email.com',
+    phone: '+1-234-567-8904',
+    appliedDate: '2024-01-15',
+    status: 'applied',
+    experience: 6,
+    skills: ['SQL', 'Python', 'Spark', 'AWS'],
   },
   {
-    id: 'EMP007',
-    name: 'Angela Martinez',
-    designation: 'Operations Manager',
-    department: 'Operations',
-    email: 'angela.martinez@company.com',
-    phone: '+1-234-567-8907',
-    leaveBalance: 9,
-  },
-  {
-    id: 'EMP008',
-    name: 'Robert Taylor',
-    designation: 'Backend Engineer',
-    department: 'Engineering',
-    email: 'robert.taylor@company.com',
-    phone: '+1-234-567-8908',
-    leaveBalance: 16,
-  },
-  {
-    id: 'EMP009',
-    name: 'Jennifer Lee',
-    designation: 'Marketing Manager',
+    id: 'CND005',
+    name: 'Lisa Rodriguez',
+    position: 'Marketing Manager',
     department: 'Marketing',
-    email: 'jennifer.lee@company.com',
-    phone: '+1-234-567-8909',
-    leaveBalance: 12,
+    email: 'lisa.rodriguez@email.com',
+    phone: '+1-234-567-8905',
+    appliedDate: '2024-01-11',
+    status: 'offered',
+    experience: 8,
+    skills: ['Digital Marketing', 'Brand Strategy', 'Analytics'],
   },
   {
-    id: 'EMP010',
-    name: 'Thomas Wilson',
-    designation: 'Finance Analyst',
-    department: 'Finance',
-    email: 'thomas.wilson@company.com',
-    phone: '+1-234-567-8910',
-    leaveBalance: 10,
+    id: 'CND006',
+    name: 'David Kim',
+    position: 'Backend Engineer',
+    department: 'Engineering',
+    email: 'david.kim@email.com',
+    phone: '+1-234-567-8906',
+    appliedDate: '2024-01-09',
+    status: 'shortlisted',
+    experience: 5,
+    skills: ['Java', 'Spring Boot', 'Microservices'],
+  },
+  {
+    id: 'CND007',
+    name: 'Angela Martinez',
+    position: 'QA Engineer',
+    department: 'Engineering',
+    email: 'angela.martinez@email.com',
+    phone: '+1-234-567-8907',
+    appliedDate: '2024-01-13',
+    status: 'applied',
+    experience: 3,
+    skills: ['Automation Testing', 'Selenium', 'Manual QA'],
+  },
+  {
+    id: 'CND008',
+    name: 'Robert Taylor',
+    position: 'DevOps Engineer',
+    department: 'Engineering',
+    email: 'robert.taylor@email.com',
+    phone: '+1-234-567-8908',
+    appliedDate: '2024-01-14',
+    status: 'shortlisted',
+    experience: 6,
+    skills: ['Kubernetes', 'Docker', 'AWS', 'CI/CD'],
   },
 ]
 
-const SAMPLE_LEAVE_RECORDS: LeaveRecord[] = [
+const SAMPLE_JOB_OPENINGS: JobOpening[] = [
   {
-    id: 'LEAVE001',
-    employeeName: 'Emma Watson',
-    leaveType: 'Annual Leave',
-    startDate: '2024-01-15',
-    endDate: '2024-01-17',
-    status: 'pending',
-    days: 3,
+    id: 'JOB001',
+    title: 'Senior Software Engineer',
+    department: 'Engineering',
+    postedDate: '2024-01-01',
+    applicants: 12,
+    status: 'open',
+    location: 'San Francisco',
+    experience: '5+ years',
   },
   {
-    id: 'LEAVE002',
-    employeeName: 'John Smith',
-    leaveType: 'Sick Leave',
-    startDate: '2024-01-20',
-    endDate: '2024-01-20',
-    status: 'pending',
-    days: 1,
+    id: 'JOB002',
+    title: 'Product Manager',
+    department: 'Product',
+    postedDate: '2024-01-03',
+    applicants: 8,
+    status: 'open',
+    location: 'New York',
+    experience: '7+ years',
   },
   {
-    id: 'LEAVE003',
-    employeeName: 'Sarah Johnson',
-    leaveType: 'Annual Leave',
-    startDate: '2024-02-05',
-    endDate: '2024-02-09',
-    status: 'pending',
-    days: 5,
+    id: 'JOB003',
+    title: 'UX Designer',
+    department: 'Design',
+    postedDate: '2024-01-02',
+    applicants: 6,
+    status: 'open',
+    location: 'Remote',
+    experience: '3+ years',
   },
   {
-    id: 'LEAVE004',
-    employeeName: 'Michael Chen',
-    leaveType: 'Personal Leave',
-    startDate: '2024-01-25',
-    endDate: '2024-01-26',
-    status: 'pending',
-    days: 2,
+    id: 'JOB004',
+    title: 'Data Engineer',
+    department: 'Engineering',
+    postedDate: '2024-01-05',
+    applicants: 10,
+    status: 'open',
+    location: 'San Francisco',
+    experience: '5+ years',
   },
   {
-    id: 'LEAVE005',
-    employeeName: 'Lisa Rodriguez',
-    leaveType: 'Annual Leave',
-    startDate: '2024-03-10',
-    endDate: '2024-03-14',
-    status: 'pending',
-    days: 5,
+    id: 'JOB005',
+    title: 'Marketing Manager',
+    department: 'Marketing',
+    postedDate: '2024-01-04',
+    applicants: 7,
+    status: 'closed',
+    location: 'Remote',
+    experience: '7+ years',
   },
 ]
 
-// Employee Card Component
-function EmployeeCardComponent({ employee }: { employee: EmployeeCard }) {
+const SAMPLE_INTERVIEWS: InterviewRecord[] = [
+  {
+    id: 'INT001',
+    candidateName: 'Emma Watson',
+    position: 'Senior Engineer',
+    interviewDate: '2024-01-20',
+    interviewer: 'John Doe',
+    status: 'completed',
+    feedback: 'Strong technical skills and good communication',
+  },
+  {
+    id: 'INT002',
+    candidateName: 'Sarah Johnson',
+    position: 'UX Designer',
+    interviewDate: '2024-01-22',
+    interviewer: 'Jane Smith',
+    status: 'scheduled',
+  },
+  {
+    id: 'INT003',
+    candidateName: 'John Smith',
+    position: 'Product Manager',
+    interviewDate: '2024-01-25',
+    interviewer: 'Mike Johnson',
+    status: 'pending',
+  },
+]
+
+// Candidate Card Component
+function CandidateCardComponent({ candidate }: { candidate: Candidate }) {
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'applied':
+        return 'bg-blue-100 text-blue-800'
+      case 'shortlisted':
+        return 'bg-yellow-100 text-yellow-800'
+      case 'interviewed':
+        return 'bg-purple-100 text-purple-800'
+      case 'offered':
+        return 'bg-green-100 text-green-800'
+      case 'rejected':
+        return 'bg-red-100 text-red-800'
+      default:
+        return 'bg-gray-100 text-gray-800'
+    }
+  }
+
   return (
     <Card className="mb-3 border border-gray-200 bg-white">
       <CardContent className="pt-6">
@@ -198,109 +263,134 @@ function EmployeeCardComponent({ employee }: { employee: EmployeeCard }) {
             <User2 className="h-8 w-8 text-blue-600" />
           </div>
           <div className="flex-1">
-            <h3 className="font-semibold text-gray-900">{employee.name}</h3>
-            <p className="text-sm text-gray-600">{employee.designation}</p>
+            <h3 className="font-semibold text-gray-900">{candidate.name}</h3>
+            <p className="text-sm text-gray-600">{candidate.position}</p>
             <div className="mt-2 space-y-1">
               <div className="flex items-center gap-2 text-xs text-gray-600">
                 <Building2 className="h-3 w-3" />
-                {employee.department}
+                {candidate.department}
               </div>
               <div className="flex items-center gap-2 text-xs text-gray-600">
                 <Mail className="h-3 w-3" />
-                {employee.email}
+                {candidate.email}
               </div>
               <div className="flex items-center gap-2 text-xs text-gray-600">
                 <Phone className="h-3 w-3" />
-                {employee.phone}
+                {candidate.phone}
               </div>
             </div>
-            {employee.leaveBalance !== undefined && (
-              <div className="mt-2 text-xs">
-                <span className="font-semibold text-gray-900">Leave Balance: </span>
-                <span className="text-green-600">{employee.leaveBalance} days</span>
-              </div>
-            )}
+            <div className="mt-3 flex flex-wrap gap-1">
+              {candidate.skills.map((skill, i) => (
+                <Badge key={i} variant="outline" className="text-xs border-gray-200">
+                  {skill}
+                </Badge>
+              ))}
+            </div>
+          </div>
+          <div className="text-right">
+            <Badge className={cn('font-medium', getStatusColor(candidate.status))}>
+              {candidate.status.charAt(0).toUpperCase() + candidate.status.slice(1)}
+            </Badge>
+            <p className="mt-2 text-xs text-gray-600">{candidate.experience} yrs exp</p>
           </div>
         </div>
         <Button variant="outline" size="sm" className="mt-4 w-full text-gray-900 border-gray-200 hover:bg-gray-50">
-          View Full Profile
+          View Profile
         </Button>
       </CardContent>
     </Card>
   )
 }
 
-// Leave Table Component
-function LeaveTableComponent({
+// Job Opening Card Component
+function JobOpeningCardComponent({ job }: { job: JobOpening }) {
+  return (
+    <Card className="mb-3 border border-gray-200 bg-white">
+      <CardContent className="pt-6">
+        <div className="flex items-start justify-between">
+          <div className="flex-1">
+            <div className="flex items-center gap-2">
+              <Briefcase className="h-5 w-5 text-blue-600" />
+              <h3 className="font-semibold text-gray-900">{job.title}</h3>
+            </div>
+            <p className="mt-1 text-sm text-gray-600">{job.department}</p>
+            <div className="mt-3 space-y-1">
+              <div className="text-xs text-gray-600">
+                <span className="font-medium text-gray-900">{job.experience}</span> experience required
+              </div>
+              <div className="text-xs text-gray-600">
+                Posted: {job.postedDate}
+              </div>
+              <div className="text-xs text-gray-600">
+                Location: {job.location}
+              </div>
+            </div>
+          </div>
+          <div className="text-right">
+            <Badge className={cn('font-medium', job.status === 'open' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800')}>
+              {job.status.charAt(0).toUpperCase() + job.status.slice(1)}
+            </Badge>
+            <p className="mt-2 text-2xl font-bold text-gray-900">{job.applicants}</p>
+            <p className="text-xs text-gray-600">Applicants</p>
+          </div>
+        </div>
+        <Button variant="outline" size="sm" className="mt-4 w-full text-gray-900 border-gray-200 hover:bg-gray-50">
+          View Candidates
+        </Button>
+      </CardContent>
+    </Card>
+  )
+}
+
+// Interview Schedule Table Component
+function InterviewTableComponent({
   records,
-  onApprove,
-  onReject,
 }: {
-  records: LeaveRecord[]
-  onApprove?: (id: string) => void
-  onReject?: (id: string) => void
+  records: InterviewRecord[]
 }) {
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'scheduled':
+        return 'bg-yellow-100 text-yellow-800'
+      case 'completed':
+        return 'bg-green-100 text-green-800'
+      case 'pending':
+        return 'bg-blue-100 text-blue-800'
+      default:
+        return 'bg-gray-100 text-gray-800'
+    }
+  }
+
   return (
     <div className="mb-4 overflow-hidden rounded-lg border border-gray-200 bg-white">
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-gray-200 bg-gray-50">
-              <th className="px-4 py-3 text-left font-semibold text-gray-900">Employee Name</th>
-              <th className="px-4 py-3 text-left font-semibold text-gray-900">Leave Type</th>
-              <th className="px-4 py-3 text-left font-semibold text-gray-900">Dates</th>
-              <th className="px-4 py-3 text-left font-semibold text-gray-900">Days</th>
+              <th className="px-4 py-3 text-left font-semibold text-gray-900">Candidate Name</th>
+              <th className="px-4 py-3 text-left font-semibold text-gray-900">Position</th>
+              <th className="px-4 py-3 text-left font-semibold text-gray-900">Interview Date</th>
+              <th className="px-4 py-3 text-left font-semibold text-gray-900">Interviewer</th>
               <th className="px-4 py-3 text-left font-semibold text-gray-900">Status</th>
-              <th className="px-4 py-3 text-left font-semibold text-gray-900">Actions</th>
+              <th className="px-4 py-3 text-left font-semibold text-gray-900">Feedback</th>
             </tr>
           </thead>
           <tbody>
             {records.map((record) => (
               <tr key={record.id} className="border-b border-gray-200 hover:bg-gray-50">
-                <td className="px-4 py-3 text-gray-900">{record.employeeName}</td>
-                <td className="px-4 py-3 text-gray-700">{record.leaveType}</td>
-                <td className="px-4 py-3 text-gray-700">
-                  {record.startDate} - {record.endDate}
-                </td>
-                <td className="px-4 py-3 text-gray-700">{record.days}</td>
+                <td className="px-4 py-3 text-gray-900">{record.candidateName}</td>
+                <td className="px-4 py-3 text-gray-700">{record.position}</td>
+                <td className="px-4 py-3 text-gray-700">{record.interviewDate}</td>
+                <td className="px-4 py-3 text-gray-700">{record.interviewer}</td>
                 <td className="px-4 py-3">
-                  <Badge
-                    className={cn(
-                      'font-medium',
-                      record.status === 'pending' && 'bg-yellow-100 text-yellow-800',
-                      record.status === 'approved' && 'bg-green-100 text-green-800',
-                      record.status === 'rejected' && 'bg-red-100 text-red-800'
-                    )}
-                  >
-                    {record.status === 'pending' && <Clock className="mr-1 inline h-3 w-3" />}
-                    {record.status === 'approved' && <CheckCircle className="mr-1 inline h-3 w-3" />}
-                    {record.status === 'rejected' && <XCircle className="mr-1 inline h-3 w-3" />}
+                  <Badge className={cn('font-medium', getStatusColor(record.status))}>
+                    {record.status === 'scheduled' && <Clock className="mr-1 inline h-3 w-3" />}
+                    {record.status === 'completed' && <CheckCircle className="mr-1 inline h-3 w-3" />}
+                    {record.status === 'pending' && <XCircle className="mr-1 inline h-3 w-3" />}
                     {record.status.charAt(0).toUpperCase() + record.status.slice(1)}
                   </Badge>
                 </td>
-                <td className="px-4 py-3">
-                  {record.status === 'pending' && (
-                    <div className="flex gap-2">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="h-7 text-xs border-gray-200 text-gray-900 hover:bg-gray-50"
-                        onClick={() => onApprove?.(record.id)}
-                      >
-                        Approve
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="h-7 text-xs border-gray-200 text-red-600 hover:bg-gray-50"
-                        onClick={() => onReject?.(record.id)}
-                      >
-                        Reject
-                      </Button>
-                    </div>
-                  )}
-                  {record.status !== 'pending' && <span className="text-xs text-gray-500">-</span>}
-                </td>
+                <td className="px-4 py-3 text-gray-700">{record.feedback ?? '-'}</td>
               </tr>
             ))}
           </tbody>
@@ -310,81 +400,16 @@ function LeaveTableComponent({
   )
 }
 
-// Attendance Calendar Component
-function AttendanceCalendarComponent({ employeeName, month, year }: { employeeName: string; month: number; year: number }) {
-  const [attendanceData] = useState<AttendanceDay[]>([
-    { date: '2024-01-01', status: 'present' },
-    { date: '2024-01-02', status: 'present' },
-    { date: '2024-01-03', status: 'absent' },
-    { date: '2024-01-04', status: 'present' },
-    { date: '2024-01-05', status: 'half-day' },
-    { date: '2024-01-06', status: 'present' },
-    { date: '2024-01-07', status: 'present' },
-    { date: '2024-01-08', status: 'present' },
-    { date: '2024-01-09', status: 'absent' },
-    { date: '2024-01-10', status: 'present' },
-    { date: '2024-01-11', status: 'present' },
-    { date: '2024-01-12', status: 'present' },
-    { date: '2024-01-13', status: 'present' },
-    { date: '2024-01-14', status: 'present' },
-    { date: '2024-01-15', status: 'present' },
-    { date: '2024-01-16', status: 'present' },
-    { date: '2024-01-17', status: 'present' },
-    { date: '2024-01-18', status: 'half-day' },
-    { date: '2024-01-19', status: 'present' },
-    { date: '2024-01-20', status: 'present' },
-    { date: '2024-01-21', status: 'present' },
-    { date: '2024-01-22', status: 'present' },
-  ])
-
-  const presentDays = attendanceData.filter((d) => d.status === 'present').length
-  const absentDays = attendanceData.filter((d) => d.status === 'absent').length
-  const halfDays = attendanceData.filter((d) => d.status === 'half-day').length
-
-  return (
-    <Card className="mb-4 border border-gray-200 bg-white">
-      <CardHeader>
-        <CardTitle className="text-sm text-gray-900">Attendance Summary - {employeeName}</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="mb-4 grid grid-cols-3 gap-4">
-          <div className="rounded-lg bg-green-50 p-3">
-            <div className="text-xs font-semibold text-gray-600">Present</div>
-            <div className="text-lg font-bold text-green-600">{presentDays}</div>
-          </div>
-          <div className="rounded-lg bg-red-50 p-3">
-            <div className="text-xs font-semibold text-gray-600">Absent</div>
-            <div className="text-lg font-bold text-red-600">{absentDays}</div>
-          </div>
-          <div className="rounded-lg bg-yellow-50 p-3">
-            <div className="text-xs font-semibold text-gray-600">Half-day</div>
-            <div className="text-lg font-bold text-yellow-600">{halfDays}</div>
-          </div>
-        </div>
-        <Button variant="outline" size="sm" className="w-full gap-2 border-gray-200 text-gray-900 hover:bg-gray-50">
-          <Download className="h-4 w-4" />
-          Export Report
-        </Button>
-      </CardContent>
-    </Card>
-  )
-}
-
 // Main Component
 export default function HomePage() {
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
-  const [selectedDepartment, setSelectedDepartment] = useState<string>('')
-  const [selectedStatuses, setSelectedStatuses] = useState<string[]>([])
-  const [confirmDialog, setConfirmDialog] = useState<{
-    open: boolean
-    action: string
-    recordId?: string
-    leaveDetails?: LeaveRecord
-  }>({ open: false, action: '' })
-  const [leaveRecords, setLeaveRecords] = useState<LeaveRecord[]>(SAMPLE_LEAVE_RECORDS)
+  const [selectedDepartment, setSelectedDepartment] = useState<string>('all')
+  const [selectedStatus, setSelectedStatus] = useState<string>('all')
+  const [candidates, setCandidates] = useState<Candidate[]>(SAMPLE_CANDIDATES)
+  const [interviews, setInterviews] = useState<InterviewRecord[]>(SAMPLE_INTERVIEWS)
   const scrollAreaRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -448,66 +473,15 @@ export default function HomePage() {
     }
   }
 
-  const handleApproveLeave = (recordId: string) => {
-    const record = leaveRecords.find((r) => r.id === recordId)
-    if (record) {
-      setConfirmDialog({
-        open: true,
-        action: 'approve',
-        recordId,
-        leaveDetails: record,
-      })
-    }
-  }
-
-  const handleRejectLeave = (recordId: string) => {
-    const record = leaveRecords.find((r) => r.id === recordId)
-    if (record) {
-      setConfirmDialog({
-        open: true,
-        action: 'reject',
-        recordId,
-        leaveDetails: record,
-      })
-    }
-  }
-
-  const confirmAction = () => {
-    if (confirmDialog.recordId) {
-      setLeaveRecords((prev) =>
-        prev.map((record) =>
-          record.id === confirmDialog.recordId
-            ? {
-                ...record,
-                status: confirmDialog.action === 'approve' ? 'approved' : 'rejected',
-              }
-            : record
-        )
-      )
-
-      const actionMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        role: 'assistant',
-        content: `Leave request for ${confirmDialog.leaveDetails?.employeeName} has been ${confirmDialog.action === 'approve' ? 'approved' : 'rejected'} successfully.`,
-        timestamp: new Date(),
-      }
-      setMessages((prev) => [...prev, actionMessage])
-    }
-    setConfirmDialog({ open: false, action: '' })
-  }
-
-  const getFilteredLeaves = () => {
-    let filtered = leaveRecords
+  const getFilteredCandidates = () => {
+    let filtered = candidates
 
     if (selectedDepartment && selectedDepartment !== 'all') {
-      const deptEmployees = SAMPLE_EMPLOYEES.filter(
-        (e) => e.department.toLowerCase() === selectedDepartment.toLowerCase()
-      ).map((e) => e.name)
-      filtered = filtered.filter((l) => deptEmployees.includes(l.employeeName))
+      filtered = filtered.filter((c) => c.department.toLowerCase() === selectedDepartment.toLowerCase())
     }
 
-    if (selectedStatuses.length > 0) {
-      filtered = filtered.filter((l) => selectedStatuses.includes(l.status))
+    if (selectedStatus && selectedStatus !== 'all') {
+      filtered = filtered.filter((c) => c.status === selectedStatus)
     }
 
     return filtered
@@ -523,7 +497,7 @@ export default function HomePage() {
         )}
       >
         <div className="flex h-16 items-center justify-between border-b border-gray-200 px-4">
-          {sidebarOpen && <h1 className="text-lg font-bold text-blue-600">KekaHR</h1>}
+          {sidebarOpen && <h1 className="text-lg font-bold text-blue-600">Hiring Module</h1>}
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
             className="rounded-lg p-2 hover:bg-gray-100"
@@ -534,18 +508,16 @@ export default function HomePage() {
 
         <nav className="flex-1 space-y-2 p-4">
           {[
-            { icon: User2, label: 'Dashboard', active: true },
-            { icon: Calendar, label: 'Leave Requests' },
+            { icon: User2, label: 'Candidates', active: true },
+            { icon: Target, label: 'Job Openings' },
+            { icon: Briefcase, label: 'Interviews' },
             { icon: Filter, label: 'Reports' },
-            { icon: Building2, label: 'Departments' },
           ].map((item, i) => (
             <div
               key={i}
               className={cn(
                 'flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-colors cursor-pointer',
-                item.active
-                  ? 'bg-blue-50 text-blue-600'
-                  : 'text-gray-700 hover:bg-gray-100'
+                item.active ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-100'
               )}
             >
               <item.icon className="h-5 w-5 flex-shrink-0" />
@@ -561,8 +533,8 @@ export default function HomePage() {
             </div>
             {sidebarOpen && (
               <div className="flex-1 text-sm">
-                <p className="font-medium text-gray-900">HR Admin</p>
-                <p className="text-xs text-gray-600">admin@company.com</p>
+                <p className="font-medium text-gray-900">Recruiter</p>
+                <p className="text-xs text-gray-600">recruiter@company.com</p>
               </div>
             )}
           </div>
@@ -573,7 +545,7 @@ export default function HomePage() {
       <div className="flex flex-1 flex-col">
         {/* Header */}
         <div className="flex h-16 items-center justify-between border-b border-gray-200 bg-white px-8">
-          <h2 className="text-xl font-semibold text-gray-900">HR Assistant Dashboard</h2>
+          <h2 className="text-xl font-semibold text-gray-900">Hiring Assistant Dashboard</h2>
           <div className="flex items-center gap-4">
             <button className="relative rounded-full p-2 hover:bg-gray-100">
               <Bell className="h-5 w-5 text-gray-600" />
@@ -593,22 +565,22 @@ export default function HomePage() {
               <div className="space-y-4 p-8">
                 {messages.length === 0 ? (
                   <div className="flex flex-col items-center justify-center py-16 text-center">
-                    <User2 className="mb-4 h-16 w-16 text-gray-300" />
-                    <h3 className="text-lg font-semibold text-gray-900">Welcome to Keka HR Assistant</h3>
+                    <Briefcase className="mb-4 h-16 w-16 text-gray-300" />
+                    <h3 className="text-lg font-semibold text-gray-900">Welcome to Hiring Assistant</h3>
                     <p className="mt-2 max-w-md text-sm text-gray-600">
-                      Ask me anything about employee data, leave requests, attendance records, or generate reports.
+                      Ask me anything about candidates, job openings, interview schedules, or hiring reports.
                     </p>
                     <div className="mt-8 grid gap-3 text-left">
                       <p className="text-xs font-semibold text-gray-700">Try asking:</p>
                       <div className="space-y-2">
                         <div className="rounded-lg bg-white p-3 text-sm text-gray-700 shadow-sm hover:shadow-md cursor-pointer">
-                          "Show all pending leave requests"
+                          "Show all candidates in engineering"
                         </div>
                         <div className="rounded-lg bg-white p-3 text-sm text-gray-700 shadow-sm hover:shadow-md cursor-pointer">
-                          "Get Emma Watson's leave balance"
+                          "List interview schedules for next week"
                         </div>
                         <div className="rounded-lg bg-white p-3 text-sm text-gray-700 shadow-sm hover:shadow-md cursor-pointer">
-                          "Show attendance for December 2024"
+                          "Show open job positions"
                         </div>
                       </div>
                     </div>
@@ -617,10 +589,7 @@ export default function HomePage() {
                   messages.map((message) => (
                     <div
                       key={message.id}
-                      className={cn(
-                        'mb-4 flex',
-                        message.role === 'user' ? 'justify-end' : 'justify-start'
-                      )}
+                      className={cn('mb-4 flex', message.role === 'user' ? 'justify-end' : 'justify-start')}
                     >
                       <div
                         className={cn(
@@ -634,42 +603,40 @@ export default function HomePage() {
 
                         {message.parsedData && (
                           <div className="mt-4 space-y-4">
-                            {message.parsedData.query_type === 'leave_inquiry' &&
-                              message.parsedData.formatted_data?.type === 'table' && (
-                                <LeaveTableComponent
-                                  records={leaveRecords.filter((r) => r.status === 'pending')}
-                                  onApprove={handleApproveLeave}
-                                  onReject={handleRejectLeave}
-                                />
-                              )}
-
-                            {message.parsedData.query_type === 'employee_search' &&
+                            {message.parsedData.query_type === 'candidate_search' &&
                               message.parsedData.formatted_data?.type === 'card' && (
                                 <div>
-                                  {SAMPLE_EMPLOYEES.slice(0, 3).map((emp) => (
-                                    <EmployeeCardComponent key={emp.id} employee={emp} />
+                                  {getFilteredCandidates().slice(0, 3).map((candidate) => (
+                                    <CandidateCardComponent key={candidate.id} candidate={candidate} />
                                   ))}
                                 </div>
                               )}
 
-                            {message.parsedData.query_type === 'attendance_query' &&
-                              message.parsedData.formatted_data?.type === 'calendar' && (
-                                <AttendanceCalendarComponent employeeName="Emma Watson" month={1} year={2024} />
+                            {message.parsedData.query_type === 'job_inquiry' &&
+                              message.parsedData.formatted_data?.type === 'card' && (
+                                <div>
+                                  {SAMPLE_JOB_OPENINGS.slice(0, 3).map((job) => (
+                                    <JobOpeningCardComponent key={job.id} job={job} />
+                                  ))}
+                                </div>
+                              )}
+
+                            {message.parsedData.query_type === 'interview_query' &&
+                              message.parsedData.formatted_data?.type === 'table' && (
+                                <InterviewTableComponent records={interviews} />
                               )}
 
                             {message.parsedData.follow_up_suggestions && (
                               <div className="flex flex-wrap gap-2 pt-3">
-                                {message.parsedData.follow_up_suggestions.map(
-                                  (suggestion: string, i: number) => (
-                                    <button
-                                      key={i}
-                                      onClick={() => setInput(suggestion)}
-                                      className="rounded-full bg-gray-100 px-3 py-1 text-xs text-gray-700 hover:bg-gray-200"
-                                    >
-                                      {suggestion}
-                                    </button>
-                                  )
-                                )}
+                                {message.parsedData.follow_up_suggestions.map((suggestion: string, i: number) => (
+                                  <button
+                                    key={i}
+                                    onClick={() => setInput(suggestion)}
+                                    className="rounded-full bg-gray-100 px-3 py-1 text-xs text-gray-700 hover:bg-gray-200"
+                                  >
+                                    {suggestion}
+                                  </button>
+                                ))}
                               </div>
                             )}
                           </div>
@@ -687,7 +654,7 @@ export default function HomePage() {
               <form onSubmit={handleSendMessage} className="flex gap-4">
                 <Input
                   type="text"
-                  placeholder="Ask Keka Assistant..."
+                  placeholder="Ask Hiring Assistant..."
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   disabled={loading}
@@ -707,7 +674,7 @@ export default function HomePage() {
 
           {/* Right Panel - Filters */}
           <div className="w-72 border-l border-gray-200 bg-white p-6">
-            <h3 className="mb-4 font-semibold text-gray-900">Quick Filters</h3>
+            <h3 className="mb-4 font-semibold text-gray-900">Filters</h3>
 
             <div className="space-y-6">
               {/* Department Filter */}
@@ -719,68 +686,62 @@ export default function HomePage() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Departments</SelectItem>
-                    <SelectItem value="Human Resources">Human Resources</SelectItem>
                     <SelectItem value="Engineering">Engineering</SelectItem>
                     <SelectItem value="Product">Product</SelectItem>
-                    <SelectItem value="Analytics">Analytics</SelectItem>
                     <SelectItem value="Design">Design</SelectItem>
-                    <SelectItem value="Operations">Operations</SelectItem>
                     <SelectItem value="Marketing">Marketing</SelectItem>
-                    <SelectItem value="Finance">Finance</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               {/* Status Filter */}
               <div>
-                <label className="mb-3 block text-sm font-medium text-gray-700">Status</label>
+                <label className="mb-2 block text-sm font-medium text-gray-700">Candidate Status</label>
+                <Select value={selectedStatus} onValueChange={setSelectedStatus}>
+                  <SelectTrigger className="border-gray-200 text-gray-900">
+                    <SelectValue placeholder="All Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Status</SelectItem>
+                    <SelectItem value="applied">Applied</SelectItem>
+                    <SelectItem value="shortlisted">Shortlisted</SelectItem>
+                    <SelectItem value="interviewed">Interviewed</SelectItem>
+                    <SelectItem value="offered">Offered</SelectItem>
+                    <SelectItem value="rejected">Rejected</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Quick Stats */}
+              <div>
+                <h4 className="mb-3 font-medium text-gray-900">Quick Stats</h4>
                 <div className="space-y-2">
-                  {[
-                    { id: 'pending', label: 'Pending', color: 'yellow' },
-                    { id: 'approved', label: 'Approved', color: 'green' },
-                    { id: 'rejected', label: 'Rejected', color: 'red' },
-                  ].map((status) => (
-                    <div key={status.id} className="flex items-center gap-2">
-                      <Checkbox
-                        id={status.id}
-                        checked={selectedStatuses.includes(status.id)}
-                        onCheckedChange={(checked) => {
-                          if (checked) {
-                            setSelectedStatuses((prev) => [...prev, status.id])
-                          } else {
-                            setSelectedStatuses((prev) => prev.filter((s) => s !== status.id))
-                          }
-                        }}
-                      />
-                      <label htmlFor={status.id} className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-                        <span
-                          className={cn(
-                            'h-2 w-2 rounded-full',
-                            status.color === 'yellow' && 'bg-yellow-500',
-                            status.color === 'green' && 'bg-green-500',
-                            status.color === 'red' && 'bg-red-500'
-                          )}
-                        />
-                        {status.label}
-                      </label>
-                    </div>
-                  ))}
+                  <div className="rounded-lg bg-blue-50 p-3">
+                    <div className="text-xs text-gray-600">Total Candidates</div>
+                    <div className="text-lg font-bold text-blue-600">{candidates.length}</div>
+                  </div>
+                  <div className="rounded-lg bg-green-50 p-3">
+                    <div className="text-xs text-gray-600">Open Positions</div>
+                    <div className="text-lg font-bold text-green-600">{SAMPLE_JOB_OPENINGS.filter(j => j.status === 'open').length}</div>
+                  </div>
+                  <div className="rounded-lg bg-yellow-50 p-3">
+                    <div className="text-xs text-gray-600">Pending Interviews</div>
+                    <div className="text-lg font-bold text-yellow-600">{interviews.filter(i => i.status === 'pending').length}</div>
+                  </div>
                 </div>
               </div>
 
-              {/* Recent Activity */}
+              {/* Recent Candidates */}
               <div>
-                <h4 className="mb-3 font-medium text-gray-900">Recent Activity</h4>
+                <h4 className="mb-3 font-medium text-gray-900">Recent Candidates</h4>
                 <div className="space-y-2">
-                  {getFilteredLeaves()
+                  {getFilteredCandidates()
                     .slice(0, 3)
-                    .map((leave) => (
-                      <div key={leave.id} className="rounded-lg bg-gray-50 p-3 text-xs">
-                        <p className="font-medium text-gray-900">{leave.employeeName}</p>
-                        <p className="mt-1 text-gray-600">{leave.leaveType}</p>
-                        <p className="mt-1 text-gray-500">
-                          {leave.startDate}
-                        </p>
+                    .map((candidate) => (
+                      <div key={candidate.id} className="rounded-lg bg-gray-50 p-3 text-xs">
+                        <p className="font-medium text-gray-900">{candidate.name}</p>
+                        <p className="mt-1 text-gray-600">{candidate.position}</p>
+                        <p className="mt-1 text-gray-500">{candidate.appliedDate}</p>
                       </div>
                     ))}
                 </div>
@@ -795,55 +756,6 @@ export default function HomePage() {
           </div>
         </div>
       </div>
-
-      {/* Confirmation Dialog */}
-      <Dialog open={confirmDialog.open} onOpenChange={(open) => !open && setConfirmDialog({ open: false, action: '' })}>
-        <DialogContent className="border border-gray-200 bg-white">
-          <DialogTitle className="text-gray-900">Confirm Action</DialogTitle>
-          <DialogDescription className="text-gray-600">
-            Are you sure you want to {confirmDialog.action} the leave request for{' '}
-            <span className="font-semibold">{confirmDialog.leaveDetails?.employeeName}</span>?
-          </DialogDescription>
-          {confirmDialog.leaveDetails && (
-            <div className="my-4 rounded-lg bg-gray-50 p-4 text-sm">
-              <div className="mb-2">
-                <span className="text-gray-600">Leave Type: </span>
-                <span className="font-medium text-gray-900">{confirmDialog.leaveDetails.leaveType}</span>
-              </div>
-              <div className="mb-2">
-                <span className="text-gray-600">Dates: </span>
-                <span className="font-medium text-gray-900">
-                  {confirmDialog.leaveDetails.startDate} - {confirmDialog.leaveDetails.endDate}
-                </span>
-              </div>
-              <div>
-                <span className="text-gray-600">Days: </span>
-                <span className="font-medium text-gray-900">{confirmDialog.leaveDetails.days}</span>
-              </div>
-            </div>
-          )}
-          <div className="flex gap-3">
-            <Button
-              variant="outline"
-              onClick={() => setConfirmDialog({ open: false, action: '' })}
-              className="border-gray-200 text-gray-900 hover:bg-gray-50"
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={confirmAction}
-              className={cn(
-                'flex-1 text-white',
-                confirmDialog.action === 'approve'
-                  ? 'bg-green-600 hover:bg-green-700'
-                  : 'bg-red-600 hover:bg-red-700'
-              )}
-            >
-              {confirmDialog.action === 'approve' ? 'Approve' : 'Reject'}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   )
 }
